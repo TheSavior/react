@@ -35,6 +35,7 @@ import ReactVersion from 'shared/ReactVersion';
 import UIManager from 'UIManager';
 
 import NativeMethodsMixin from './NativeMethodsMixin';
+import {mountSafeCallback_NOT_REALLY_SAFE} from './NativeMethodsMixinUtils';
 import ReactNativeComponent from './ReactNativeComponent';
 import {getClosestInstanceFromNode} from './ReactNativeComponentTree';
 import {getInspectorDataForViewTag} from './ReactNativeFiberInspector';
@@ -118,6 +119,22 @@ const ReactNativeRenderer: ReactNativeType = {
   findNodeHandle,
 
   setNativeProps,
+
+  measure(handle: any, callback: MeasureOnSuccessCallback) {
+    if (handle._nativeTag == null) {
+      warningWithoutStack(
+        handle._nativeTag != null,
+        "measure was called with a ref that isn't a " +
+          'native component. Use React.forwardRef to get access to the underlying native component',
+      );
+      return;
+    }
+
+    UIManager.measure(
+      findNodeHandle(handle),
+      mountSafeCallback_NOT_REALLY_SAFE(this, callback),
+    );
+  },
 
   render(element: React$Element<any>, containerTag: any, callback: ?Function) {
     let root = roots.get(containerTag);

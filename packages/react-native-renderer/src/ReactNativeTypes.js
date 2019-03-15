@@ -132,6 +132,17 @@ export type ReactNativeType = {
   NativeComponent: typeof ReactNativeComponent,
   findNodeHandle(componentOrHandle: any): ?number,
   setNativeProps(handle: any, nativeProps: Object): void,
+  measure: (handle: any, callback: MeasureOnSuccessCallback) => void,
+  measureInWindow: (
+    handle: any,
+    callback: MeasureInWindowOnSuccessCallback,
+  ) => void,
+  measureLayout: (
+    handle: any,
+    relativeToNativeNode: any,
+    onSuccess: MeasureLayoutOnSuccessCallback,
+    onFailure: () => void,
+  ) => void,
   render(
     element: React$Element<any>,
     containerTag: any,
@@ -148,6 +159,17 @@ export type ReactFabricType = {
   NativeComponent: typeof ReactNativeComponent,
   findNodeHandle(componentOrHandle: any): ?number,
   setNativeProps(handle: any, nativeProps: Object): void,
+  measure: (handle: any, callback: MeasureOnSuccessCallback) => void,
+  measureInWindow: (
+    handle: any,
+    callback: MeasureInWindowOnSuccessCallback,
+  ) => void,
+  measureLayout: (
+    handle: any,
+    relativeToNativeNode: any,
+    onSuccess: MeasureLayoutOnSuccessCallback,
+    onFailure: () => void,
+  ) => void,
   render(
     element: React$Element<any>,
     containerTag: any,

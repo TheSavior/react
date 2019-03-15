@@ -68,6 +68,7 @@ export type UpdatePayload = Object;
 
 export type TimeoutHandle = TimeoutID;
 export type NoTimeout = -1;
+type InternalInstanceHandle = Object;
 
 // TODO: Remove this conditional once all changes have propagated.
 if (registerEventHandler) {
@@ -82,15 +83,18 @@ if (registerEventHandler) {
  */
 class ReactFabricHostComponent {
   _nativeTag: number;
+  _internalInstanceHandle: InternalInstanceHandle;
   viewConfig: ReactNativeBaseComponentViewConfig<>;
   currentProps: Props;
 
   constructor(
     tag: number,
+    internalInstanceHandle: InternalInstanceHandle,
     viewConfig: ReactNativeBaseComponentViewConfig<>,
     props: Props,
   ) {
     this._nativeTag = tag;
+    this._internalInstanceHandle = internalInstanceHandle;
     this.viewConfig = viewConfig;
     this.currentProps = props;
   }
@@ -158,7 +162,7 @@ export function createInstance(
   props: Props,
   rootContainerInstance: Container,
   hostContext: HostContext,
-  internalInstanceHandle: Object,
+  internalInstanceHandle: InternalInstanceHandle,
 ): Instance {
   const tag = nextReactTag;
   nextReactTag += 2;
@@ -188,7 +192,12 @@ export function createInstance(
     internalInstanceHandle, // internalInstanceHandle
   );
 
-  const component = new ReactFabricHostComponent(tag, viewConfig, props);
+  const component = new ReactFabricHostComponent(
+    tag,
+    internalInstanceHandle,
+    viewConfig,
+    props,
+  );
 
   return {
     node: node,
@@ -200,7 +209,7 @@ export function createTextInstance(
   text: string,
   rootContainerInstance: Container,
   hostContext: HostContext,
-  internalInstanceHandle: Object,
+  internalInstanceHandle: InternalInstanceHandle,
 ): TextInstance {
   invariant(
     hostContext.isInAParentText,
@@ -321,7 +330,7 @@ export function cloneInstance(
   type: string,
   oldProps: Props,
   newProps: Props,
-  internalInstanceHandle: Object,
+  internalInstanceHandle: InternalInstanceHandle,
   keepChildren: boolean,
   recyclableInstance: null | Instance,
 ): Instance {
@@ -350,7 +359,7 @@ export function cloneHiddenInstance(
   instance: Instance,
   type: string,
   props: Props,
-  internalInstanceHandle: Object,
+  internalInstanceHandle: InternalInstanceHandle,
 ): Instance {
   const viewConfig = instance.canonical.viewConfig;
   const node = instance.node;
@@ -367,7 +376,7 @@ export function cloneHiddenInstance(
 export function cloneHiddenTextInstance(
   instance: Instance,
   text: string,
-  internalInstanceHandle: Object,
+  internalInstanceHandle: InternalInstanceHandle,
 ): TextInstance {
   throw new Error('Not yet implemented.');
 }

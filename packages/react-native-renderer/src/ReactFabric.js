@@ -7,7 +7,12 @@
  * @flow
  */
 
-import type {ReactFabricType} from './ReactNativeTypes';
+import type {
+  ReactFabricType,
+  MeasureInWindowOnSuccessCallback,
+  MeasureLayoutOnSuccessCallback,
+  MeasureOnSuccessCallback,
+} from './ReactNativeTypes';
 import type {ReactNodeList} from 'shared/ReactTypes';
 
 import './ReactFabricInjection';
@@ -29,6 +34,7 @@ import {setBatchingImplementation} from 'events/ReactGenericBatching';
 import ReactVersion from 'shared/ReactVersion';
 
 import NativeMethodsMixin from './NativeMethodsMixin';
+import {mountSafeCallback_NOT_REALLY_SAFE} from './NativeMethodsMixinUtils';
 import ReactNativeComponent from './ReactNativeComponent';
 import {getClosestInstanceFromNode} from './ReactFabricComponentTree';
 import {getInspectorDataForViewTag} from './ReactNativeFiberInspector';
@@ -36,6 +42,7 @@ import {getInspectorDataForViewTag} from './ReactNativeFiberInspector';
 import ReactSharedInternals from 'shared/ReactSharedInternals';
 import getComponentName from 'shared/getComponentName';
 import warningWithoutStack from 'shared/warningWithoutStack';
+import FabricUIManager from 'FabricUIManager';
 
 const ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner;
 
@@ -111,6 +118,24 @@ const ReactFabric: ReactFabricType = {
     );
 
     return;
+  },
+
+  measure(handle: any, callback: MeasureOnSuccessCallback) {
+    if (handle._nativeTag == null) {
+      warningWithoutStack(
+        handle._nativeTag != null,
+        "measure was called with a ref that isn't a " +
+          'native component. Use React.forwardRef to get access to the underlying native component',
+      );
+      return;
+    }
+
+    console.log('node', handle.canonical.node);
+
+    FabricUIManager.measure(
+      handle.canonical.node,
+      mountSafeCallback_NOT_REALLY_SAFE(this, callback),
+    );
   },
 
   render(element: React$Element<any>, containerTag: any, callback: ?Function) {
