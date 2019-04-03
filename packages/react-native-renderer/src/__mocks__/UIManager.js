@@ -3,6 +3,8 @@
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
  */
 
 'use strict';
@@ -10,6 +12,11 @@
 // Mock of the Native Hooks
 
 import invariant from 'shared/invariant';
+
+import type {
+  MeasureOnSuccessCallback,
+  MeasureInWindowOnSuccessCallback,
+} from '../ReactNativeTypes';
 
 // Map of viewTag -> {children: [childTag], parent: ?parentTag}
 const roots = [];
@@ -153,6 +160,8 @@ const RCTUIManager = {
     views.get(parentTag).children.forEach(tag => removeChild(parentTag, tag));
   }),
   replaceExistingNonRootView: jest.fn(),
+  measure: jest.fn(),
+  measureInWindow: jest.fn(),
   measureLayout: jest.fn(),
   __takeSnapshot: jest.fn(),
 };
