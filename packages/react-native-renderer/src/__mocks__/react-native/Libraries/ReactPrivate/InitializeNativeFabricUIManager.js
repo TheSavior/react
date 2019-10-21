@@ -174,6 +174,8 @@ const RCTFabricUIManager = {
     );
     success(1, 1, 100, 100);
   }),
+
+  setNativeProps: jest.fn(),
 };
 
 global.nativeFabricUIManager = RCTFabricUIManager;

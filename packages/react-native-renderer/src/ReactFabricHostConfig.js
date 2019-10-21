@@ -21,7 +21,10 @@ import type {
   ReactEventResponderInstance,
 } from 'shared/ReactTypes';
 
-import {mountSafeCallback_NOT_REALLY_SAFE} from './NativeMethodsMixinUtils';
+import {
+  mountSafeCallback_NOT_REALLY_SAFE,
+  warnForStyleProps,
+} from './NativeMethodsMixinUtils';
 import {create, diff} from './ReactNativeAttributePayload';
 
 import invariant from 'shared/invariant';
@@ -57,6 +60,7 @@ const {
   measure: fabricMeasure,
   measureInWindow: fabricMeasureInWindow,
   measureLayout: fabricMeasureLayout,
+  setNativeProps,
 } = nativeFabricUIManager;
 
 const {get: getViewConfigForType} = ReactNativeViewConfigRegistry;
@@ -181,7 +185,18 @@ class ReactFabricHostComponent {
       'Warning: setNativeProps is not currently supported in Fabric',
     );
 
-    return;
+    if (__DEV__) {
+      warnForStyleProps(nativeProps, this.viewConfig.validAttributes);
+    }
+
+    const updatePayload = create(nativeProps, this.viewConfig.validAttributes);
+
+    if (updatePayload != null) {
+      setNativeProps(
+        this._internalInstanceHandle.stateNode.node,
+        updatePayload,
+      );
+    }
   }
 }
 

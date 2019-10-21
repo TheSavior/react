@@ -205,9 +205,14 @@ describe('ReactFabric', () => {
     ).toMatchSnapshot();
   });
 
-  it('should not call UIManager.updateView from ref.setNativeProps', () => {
+  it('should warn and call fabricUiManager from ref.setNativeProps', () => {
     const View = createReactNativeComponentClass('RCTView', () => ({
-      validAttributes: {foo: true},
+      validAttributes: {
+        color: {
+          diff: null,
+          process: color => (color === 'red' ? 'pass' : 'fail'),
+        },
+      },
       uiViewClassName: 'RCTView',
     }));
 
@@ -225,19 +230,19 @@ describe('ReactFabric', () => {
     });
 
     [View, Subclass, CreateClass].forEach(Component => {
-      UIManager.updateView.mockReset();
+      nativeFabricUIManager.setNativeProps.mockClear();
 
       let viewRef;
       ReactFabric.render(
         <Component
-          foo="bar"
+          color="blue"
           ref={ref => {
             viewRef = ref;
           }}
         />,
         11,
       );
-      expect(UIManager.updateView).not.toBeCalled();
+      expect(nativeFabricUIManager.setNativeProps).not.toBeCalled();
 
       expect(() => {
         viewRef.setNativeProps({});
@@ -245,14 +250,20 @@ describe('ReactFabric', () => {
         withoutStack: true,
       });
 
-      expect(UIManager.updateView).not.toBeCalled();
+      expect(nativeFabricUIManager.setNativeProps).not.toBeCalled();
 
       expect(() => {
-        viewRef.setNativeProps({foo: 'baz'});
+        viewRef.setNativeProps({color: 'red'});
       }).toWarnDev([SET_NATIVE_PROPS_NOT_SUPPORTED_MESSAGE], {
         withoutStack: true,
       });
-      expect(UIManager.updateView).not.toBeCalled();
+      expect(nativeFabricUIManager.setNativeProps).toHaveBeenCalledTimes(1);
+      expect(nativeFabricUIManager.setNativeProps).toHaveBeenCalledWith(
+        expect.any(Object),
+        {
+          color: 'pass',
+        },
+      );
     });
   });
 

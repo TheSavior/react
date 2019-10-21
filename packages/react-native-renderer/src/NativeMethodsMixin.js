@@ -247,7 +247,6 @@ export default function(
           false,
           'Warning: setNativeProps is not currently supported in Fabric',
         );
-        return;
       }
 
       const nativeTag =
@@ -262,14 +261,21 @@ export default function(
       const updatePayload = create(nativeProps, viewConfig.validAttributes);
 
       // Avoid the overhead of bridge calls if there's no update.
-      // This is an expensive no-op for Android, and causes an unnecessary
+      // In paper this is an expensive no-op for Android, and causes an unnecessary
       // view invalidation for certain components (eg RCTTextInput) on iOS.
       if (updatePayload != null) {
-        UIManager.updateView(
-          nativeTag,
-          viewConfig.uiViewClassName,
-          updatePayload,
-        );
+        if (maybeInstance.canonical) {
+          nativeFabricUIManager.setNativeProps(
+            maybeInstance.node,
+            updatePayload,
+          );
+        } else {
+          UIManager.updateView(
+            nativeTag,
+            viewConfig.uiViewClassName,
+            updatePayload,
+          );
+        }
       }
     },
 
