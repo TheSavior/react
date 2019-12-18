@@ -180,6 +180,40 @@ const ReactFabric: ReactFabricType = {
     );
   },
 
+  findInstanceAtPoint(
+    handle: any,
+    x: number,
+    y: number,
+    callback: (instance: ?React$ElementRef<HostComponent<mixed>>) => mixed,
+  ) {
+    const invalid =
+      handle._nativeTag == null || handle._internalInstanceHandle == null;
+
+    if (invalid) {
+      if (__DEV__) {
+        if (invalid) {
+          console.error(
+            "findInstanceAtPoint was called with a ref that isn't a native component.",
+          );
+        }
+      }
+      return;
+    }
+
+    nativeFabricUIManager.findNodeAtPoint(
+      handle._internalInstanceHandle.stateNode.node,
+      x,
+      y,
+      shadowNode => {
+        if (shadowNode == null) {
+          callback(null);
+        }
+
+        callback(shadowNode.stateNode.canonical);
+      },
+    );
+  },
+
   render(element: React$Element<any>, containerTag: any, callback: ?Function) {
     let root = roots.get(containerTag);
 

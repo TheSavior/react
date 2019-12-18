@@ -183,6 +183,29 @@ const ReactNativeRenderer: ReactNativeType = {
     UIManager.dispatchViewManagerCommand(handle._nativeTag, command, args);
   },
 
+  findInstanceAtPoint(
+    handle: any,
+    x: number,
+    y: number,
+    callback: (instance: ?React$ElementRef<HostComponent<mixed>>) => mixed,
+  ) {
+    if (handle._nativeTag == null) {
+      if (__DEV__) {
+        if (handle._nativeTag == null) {
+          console.error(
+            "findInstanceAtPoint was called with a ref that isn't a native component.",
+          );
+        }
+      }
+      return;
+    }
+
+    UIManager.findSubviewIn(findNodeHandle(handle), [x, y], tag => {
+      const instance = getClosestInstanceFromNode(tag);
+      callback(instance.stateNode);
+    });
+  },
+
   render(element: React$Element<any>, containerTag: any, callback: ?Function) {
     let root = roots.get(containerTag);
 
