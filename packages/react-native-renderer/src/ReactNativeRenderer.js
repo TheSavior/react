@@ -38,7 +38,7 @@ import {UIManager} from 'react-native/Libraries/ReactPrivate/ReactNativePrivateI
 import NativeMethodsMixin from './NativeMethodsMixin';
 import ReactNativeComponent from './ReactNativeComponent';
 import {getClosestInstanceFromNode} from './ReactNativeComponentTree';
-import {getInspectorDataForViewTag} from './ReactNativeFiberInspector';
+import {getInspectorDataForHostInstance} from './ReactNativeFiberInspector';
 
 import {LegacyRoot} from 'shared/ReactRootTags';
 import ReactSharedInternals from 'shared/ReactSharedInternals';
@@ -256,7 +256,7 @@ const ReactNativeRenderer: ReactNativeType = {
 
 injectIntoDevTools({
   findFiberByHostInstance: getClosestInstanceFromNode,
-  getInspectorDataForViewTag: getInspectorDataForViewTag,
+  getInspectorDataForHostInstance: getInspectorDataForHostInstance,
   bundleType: __DEV__ ? 1 : 0,
   version: ReactVersion,
   rendererPackageName: 'react-native-renderer',

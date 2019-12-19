@@ -19,14 +19,12 @@ import invariant from 'shared/invariant';
 // Module provided by RN:
 import {UIManager} from 'react-native/Libraries/ReactPrivate/ReactNativePrivateInterface';
 
-import {getClosestInstanceFromNode} from './ReactNativeComponentTree';
-
 const emptyObject = {};
 if (__DEV__) {
   Object.freeze(emptyObject);
 }
 
-let getInspectorDataForViewTag;
+let getInspectorDataForHostInstance;
 
 if (__DEV__) {
   const traverseOwnerTreeUp = function(hierarchy, instance: any) {
@@ -89,8 +87,8 @@ if (__DEV__) {
     }));
   };
 
-  getInspectorDataForViewTag = function(viewTag: number): Object {
-    const closestInstance = getClosestInstanceFromNode(viewTag);
+  getInspectorDataForHostInstance = function(hostInstance: Object): Object {
+    const closestInstance = hostInstance._internalFiberInstanceHandle || hostInstance._internalInstanceHandle;
 
     // Handle case where user clicks outside of ReactNative
     if (!closestInstance) {
@@ -118,12 +116,12 @@ if (__DEV__) {
     };
   };
 } else {
-  getInspectorDataForViewTag = () => {
+  getInspectorDataForHostInstance = () => {
     invariant(
       false,
-      'getInspectorDataForViewTag() is not available in production',
+      'getInspectorDataForHostInstance() is not available in production',
     );
   };
 }
 
-export {getInspectorDataForViewTag};
+export {getInspectorDataForHostInstance};

@@ -32,7 +32,7 @@ import ReactVersion from 'shared/ReactVersion';
 import NativeMethodsMixin from './NativeMethodsMixin';
 import ReactNativeComponent from './ReactNativeComponent';
 import {getClosestInstanceFromNode} from './ReactFabricComponentTree';
-import {getInspectorDataForViewTag} from './ReactNativeFiberInspector';
+import {getInspectorDataForHostInstance} from './ReactNativeFiberInspector';
 
 import {LegacyRoot} from 'shared/ReactRootTags';
 import ReactSharedInternals from 'shared/ReactSharedInternals';
@@ -254,7 +254,7 @@ const ReactFabric: ReactFabricType = {
 
 injectIntoDevTools({
   findFiberByHostInstance: getClosestInstanceFromNode,
-  getInspectorDataForViewTag: getInspectorDataForViewTag,
+  getInspectorDataForHostInstance: getInspectorDataForHostInstance,
   bundleType: __DEV__ ? 1 : 0,
   version: ReactVersion,
   rendererPackageName: 'react-native-renderer',
